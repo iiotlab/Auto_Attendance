@@ -2,11 +2,11 @@
 <html lang="en">
 <head>
     <title>Home Page Sectioned</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="section.css">
 </head>
 <body>
     <section class="heading-part">
-        <p class="title">Heading section <br> For Auto Attendance</p>
+        <p class="title">IIOT PROJECT <br> For Auto Attendance</p>
     </section>
 
     <section class="data-part">
@@ -44,7 +44,62 @@
             </tbody>
 
         </table>
+
+        <br><br><br><br><br><br>
+
+        <table id="data-table" style="width: 100%;">
+
+        </table>
+
+        <button onclick="createTable()"> Try this </button>
     </section>
     
 </body>
+
+
+<script>
+    async function createTable() {
+        try {
+            const channelId = '2652364'; // Replace with your channel ID
+            const readApiKey = 'VEMV807QEBD49UF6'; // Replace with your read API key
+            const url = `https://api.thingspeak.com/channels/${channelId}/feeds.json?api_key=${readApiKey}&results=95`; // Adjust results as needed
+            
+            const response = await fetch(url);
+            const data = await response.json();
+
+            const table = document.getElementById('data-table');
+            table.innerHTML = ''; // Clear any existing table content
+
+            // Create table headers based on the JSON keys from the first feed
+            const headerRow = document.createElement('tr');
+            Object.keys(data.feeds[0]).forEach(key => {
+                const th = document.createElement('th');
+                th.textContent = capitalize(key); // Capitalize the header name
+                headerRow.appendChild(th);
+            });
+            table.appendChild(headerRow); // Append header row to table
+
+            // Create table rows based on the feeds
+            data.feeds.forEach(feed => {
+                const row = document.createElement('tr');
+                Object.values(feed).forEach(value => {
+                    const cell = document.createElement('td');
+                    cell.textContent = value;
+                    row.appendChild(cell);
+                });
+                table.appendChild(row); // Append row to table
+            });
+
+        } catch (error) {
+            console.error('Error fetching data from ThingSpeak:', error);
+        }
+    }
+
+    // Capitalize the first letter of the table header names
+    function capitalize(string) {
+        return string.charAt(0).toUpperCase() + string.slice(1);
+    }
+</script>
+
+
 </html>
